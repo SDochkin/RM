@@ -1,35 +1,45 @@
 import React, { useState } from 'react';
-import gql from 'graphql-tag';
-
-import { Input, ImageBlock } from '../../components';
 
 import { useThrottledApolloHook } from '../../utils/useThrottledApoloHook';
+import { query } from '../../api/query';
+import { getStorageItem } from '../../utils/getStorageItem';
 
-import { IImageBlock } from '../../interfaces';
-import './styles.css';
+import { StyledInput, ImageBlock } from '../../components';
+import {
+	StyledMainContainer,
+	StyledImagesBlock,
+	StyledPartyBlock,
+	StyledPartyHeader,
+	StyledCharactersContainer,
+	StyledCharactersBlock,
+	StyledCharacterName,
+	StyledCharacterImage,
+} from './styled';
 
 export const Main: React.FC = () => {
+	const initialParty = getStorageItem('party');
 	const [value, setValue] = useState('');
-	const query = gql`
-		query getCharactersData($value: String!) {
-			characters(filter: { name: $value }) {
-				results {
-					id
-					image
-					species
-				}
-			}
-		}
-	`;
-	const [result, throttledGetData] = useThrottledApolloHook(query, value);
+	const [partyCharacters, setPartyCharacters] = useState(initialParty);
+	const [charactersList, throttledGetData] = useThrottledApolloHook(query, value);
 	return (
-		<div className="main-container">
-			<Input throttledGetData={throttledGetData} value={value} setValue={setValue} />
-			<div className="main-container__images-block">
-				{result.map(({ id, image, species }: IImageBlock): any => (
-					<ImageBlock key={id} src={image} dataId={id} alt={`${species} Rick`} />
-				))}
-			</div>
-		</div>
+		<StyledMainContainer>
+			<StyledInput throttledGetData={throttledGetData} value={value} setValue={setValue} />
+			<StyledImagesBlock>
+				<ImageBlock data={charactersList} partyCharacters={partyCharacters} setPartyCharacters={setPartyCharacters} />
+			</StyledImagesBlock>
+			<StyledPartyBlock>
+				<StyledPartyHeader>Party</StyledPartyHeader>
+				<StyledCharactersContainer>
+					<StyledCharactersBlock image={partyCharacters && partyCharacters.rick}>
+						{/* <StyledCharacterImage src={partyCharacters && partyCharacters.rick} /> */}
+						<StyledCharacterName>Rick</StyledCharacterName>
+					</StyledCharactersBlock>
+					<StyledCharactersBlock image={partyCharacters && partyCharacters.morty}>
+						{/* <StyledCharacterImage src={partyCharacters && partyCharacters.morty} /> */}
+						<StyledCharacterName>Morty</StyledCharacterName>
+					</StyledCharactersBlock>
+				</StyledCharactersContainer>
+			</StyledPartyBlock>
+		</StyledMainContainer>
 	);
 };

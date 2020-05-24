@@ -1,26 +1,28 @@
-.image-block__container {
+import styled from 'styled-components';
+
+export const StyledImageBlockContainer = styled.div`
 	position: relative;
 	width: 180px;
 	height: 220px;
 	margin-right: 30px;
 	margin-bottom: 30px;
-}
 
-.image-block__container:nth-child(4n) {
-	margin-right: 0;
-}
+	&:nth-child(4n) {
+		margin-right: 0;
+	}
+`;
 
-.image-block__img {
+export const StyledImage = styled.img`
 	width: 100%;
 	height: 100%;
 	cursor: pointer;
-}
 
-.image-block__img:hover {
-	border: 2px solid lightblue;
-}
+	&:hover {
+		border: 2px solid lightblue;
+	}
+`;
 
-.image-block__close-icon {
+export const StyledCloseIcon = styled.span`
 	position: absolute;
 	top: 7px;
 	right: 7px;
@@ -33,8 +35,8 @@
 	background-color: rgba(255, 255, 255, 0.6);
 	text-align: center;
 	cursor: pointer;
-}
 
-.image-block__close-icon:hover {
-	background-color: #fff;
-}
+	&:hover {
+		background-color: #fff;
+	}
+`;
