@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 
-const isValidLength = (str: string): boolean => str.length > 2;
+import { isValidLength } from '../../utils';
 
 interface IInput {
 	throttledGetData: () => void;
@@ -11,12 +11,14 @@ interface IInput {
 }
 
 const Input: React.FC<IInput> = ({ throttledGetData, value, setValue, className }: IInput) => {
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-		setValue(e.target.value);
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => setValue(e.target.value);
+
+	useEffect(() => {
 		if (isValidLength(value)) {
 			throttledGetData();
 		}
-	};
+	}, [throttledGetData, value]);
+
 	return <input className={className} value={value} onChange={handleChange}></input>;
 };
 

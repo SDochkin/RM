@@ -1,9 +1,5 @@
 import styled from 'styled-components';
 
-interface ITest {
-	image?: string;
-}
-
 export const StyledMainContainer = styled.div`
 	display: flex;
 	flex-flow: column nowrap;
@@ -43,24 +39,28 @@ export const StyledCharactersContainer = styled.div`
 	justify-content: space-between;
 	width: 100%;
 `;
-export const StyledCharactersBlock = styled.div<ITest>`
+export const StyledCharactersBlock = styled.div`
+	position: relative;
 	display: flex;
 	justify-content: center;
+	background: #dadada;
 	width: 180px;
 	height: 220px;
-	background: ${({ image }) => image || '#dadada'};
-	background-size: cover;
 `;
 
 export const StyledCharacterImage = styled.img`
+	position: relative;
+	z-index: 100;
 	width: 100%;
 	height: 100%;
+	background: transparent;
 `;
 
-export const StyledCharacterName = styled.p`
-	display: flex;
-	margin-top: auto;
-	margin-bottom: 30px;
+export const StyledCharacterName = styled.span`
+	position: absolute;
+	z-index: 10;
+	width: 100%;
+	bottom: 30px;
 	font-weight: 300;
 	font-size: 24px;
 	line-height: 28px;

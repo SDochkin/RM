@@ -1,7 +1,9 @@
-export const getStorageItem = (key: string): any => {
-	let result = localStorage.getItem(key);
-	if (typeof result === 'string') {
-		result = JSON.parse(result);
+import { IInitialParty } from '../interfaces';
+
+export const getStorageItem = (key: string): IInitialParty => {
+	const localStorageItem = localStorage.getItem(key);
+	if (typeof localStorageItem === 'string') {
+		return JSON.parse(localStorageItem);
 	}
-	return result; //TODO: rework
+	return { rick: undefined, morty: undefined };
 };

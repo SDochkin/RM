@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import differenceBy from 'lodash/differenceBy';
 
-import { StyledImageBlockContainer, StyledImage, StyledCloseIcon } from './styled';
+import { setStorageItem } from '../../utils';
 
-interface IImageBlock {
-	id: string;
-	image: string;
-	name: string;
-}
+import { ICharacter } from '../../interfaces';
+
+import { StyledImageBlockContainer, StyledImage, StyledImageClicked, StyledCloseIcon } from './styled';
 
 export const ImageBlock: React.FC<any> = ({ data, partyCharacters, setPartyCharacters }): any => {
 	const [filteredData, setFilteredData] = useState([]);
 	const [deletedCharactersList, setDeletedCharactersList] = useState([]);
+	const [clicked, setClicked] = useState({ rick: '', morty: '' });
+
 	useEffect(() => {
 		const dataWithoutDeletedCharacters: any = differenceBy(data, deletedCharactersList, 'id');
 		setFilteredData(dataWithoutDeletedCharacters);
@@ -19,28 +19,41 @@ export const ImageBlock: React.FC<any> = ({ data, partyCharacters, setPartyChara
 
 	const handleClose = (e: React.MouseEvent<HTMLElement>): void => {
 		const currentDeletedElement = (e.target as HTMLElement).getAttribute('data-id');
-		const deletedCharacter = filteredData.filter((item: any) => item.id === currentDeletedElement);
+		const deletedCharacter = filteredData.filter((character: ICharacter) => character.id === currentDeletedElement);
 		setDeletedCharactersList([...deletedCharactersList, ...deletedCharacter]);
 	};
 
 	const handleImageClick = (e: React.MouseEvent<HTMLElement>): void => {
-		const clickedImageUrl = (e.target as HTMLElement).getAttribute('src');
-		const clickedImageCharacterName: any = (e.target as HTMLElement).getAttribute('alt');
+		const clickedImageUrl: string = (e.target as HTMLElement).getAttribute('src') || '';
+		const clickedImageCharacterName: string = (e.target as HTMLElement).getAttribute('alt') || '';
+
+		const addPartyCharacter = (name: string): { rick: string; morty: string } => ({ ...partyCharacters, [name]: clickedImageUrl });
+		const addClickedInfo = (name: string): { rick: string; morty: string } => ({ ...clicked, [name]: clickedImageUrl });
+
 		if (/Rick/.exec(clickedImageCharacterName)) {
-			setPartyCharacters({ ...partyCharacters, rick: `url(${clickedImageUrl})` });
-			localStorage.setItem('party', JSON.stringify({ ...partyCharacters, rick: `url(${clickedImageUrl})` }));
+			setClicked(addClickedInfo('rick'));
+			setPartyCharacters(addPartyCharacter('rick'));
+			setStorageItem('party', addPartyCharacter('rick'));
 		} else if (/Morty/.exec(clickedImageCharacterName)) {
-			setPartyCharacters({ ...partyCharacters, morty: `url(${clickedImageUrl})` });
+			setClicked(addClickedInfo('morty'));
+			setPartyCharacters(addPartyCharacter('morty'));
+			setStorageItem('party', addPartyCharacter('morty'));
 		}
-		localStorage.setItem('party', JSON.stringify({ ...partyCharacters, morty: `url(${clickedImageUrl})` }));
 	};
 
-	return filteredData.map(({ id, image, name }: IImageBlock) => (
+	const getStyledImageState = (image: string, name: string): React.ReactElement => {
+		if (clicked.rick === image || clicked.morty === image) {
+			return <StyledImageClicked onClick={handleImageClick} src={image} alt={name} />;
+		}
+		return <StyledImage onClick={handleImageClick} src={image} alt={name} />;
+	};
+
+	return filteredData.map(({ id, image, name }: ICharacter) => (
 		<StyledImageBlockContainer key={id}>
-			<StyledImage onClick={handleImageClick} src={image} alt={name} />
+			{getStyledImageState(image, name)}
 			<StyledCloseIcon onClick={handleClose} data-id={id}>
 				&times;
 			</StyledCloseIcon>
 		</StyledImageBlockContainer>
-	)); // можно вынести в компонент
+	));
 };

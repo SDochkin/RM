@@ -22,6 +22,13 @@ export const StyledImage = styled.img`
 	}
 `;
 
+export const StyledImageClicked = styled.img`
+	width: 100%;
+	height: 100%;
+	cursor: pointer;
+	border: 4px solid #1ef00b;
+`;
+
 export const StyledCloseIcon = styled.span`
 	position: absolute;
 	top: 7px;
